@@ -1,5 +1,5 @@
-const mailjet = require('node-mailjet')
+require('dotenv').config();
+const Mailjet = require('node-mailjet');
+const mailjetClient = Mailjet.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 
-const mailjetClient = mailjet.connect(process.env.MJ_APIKEY_PUBLIC,process.env.MJ_APIKEY_PRIVATE)
-
-module.exports = mailjetClient
+module.exports = mailjetClient;

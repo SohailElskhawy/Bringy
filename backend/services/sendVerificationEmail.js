@@ -1,4 +1,4 @@
-import mailjetClient from "../config/mailjet";
+const mailjetClient = require('../config/mailjet');
 const sendVerificationEmail = async (email, name, token) => {
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
@@ -35,4 +35,4 @@ const sendVerificationEmail = async (email, name, token) => {
         })
 };
 
-export default sendVerificationEmail;
+module.exports = sendVerificationEmail;

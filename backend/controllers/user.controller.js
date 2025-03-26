@@ -1,8 +1,7 @@
-import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
-import User from '../models/user.model';
-import sendVerificationEmail from "../services/sendVerificationEmail";
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user.model');
+const sendVerificationEmail = require('../services/sendVerificationEmail');
 
 const register = async (req, res) => {
     try {
@@ -52,4 +51,4 @@ const register = async (req, res) => {
 
 
 
-export { register };
+module.exports = { register };
