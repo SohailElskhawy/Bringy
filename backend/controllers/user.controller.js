@@ -85,7 +85,7 @@ const verifyEmail = async (req, res) => {
             return res.status(404).json({ message: 'Admin not found' });
         }
 
-<<<<<<< HEAD
+ HEAD
         // compares the user's password with the hash password 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
