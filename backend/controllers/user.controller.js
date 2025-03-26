@@ -68,9 +68,53 @@ const verifyEmail = async (req, res) => {
     }
 };
 
+const adminLogin = async (req, res) => {
+    try {
+        // get user's email & password 
+        const { email, password } = req.body;
+
+        // check if password & email valid
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        // Check if email exists in the database
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        // comparing hashed password with user's password 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        // Step 6: Return login token using JWT with 201 status
+        if (user.role !== 'admin') {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        // Create JWT payload
+        const payload = {
+            userId: user._id,
+            role: user.role,
+        };
+
+        // Sign JWT token (you can replace 'your-secret-key' with an actual secret key)
+        const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '1h' });
+
+        // Send response with the token
+        res.status(201).json({
+            message: 'Login successful',
+            token,
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
 
-
-
-
-module.exports = { register, verifyEmail };
+module.exports = { register, verifyEmail, adminLogin };
