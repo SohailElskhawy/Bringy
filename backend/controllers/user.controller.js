@@ -47,8 +47,27 @@ const register = async (req, res) => {
     }
 };
 
+const verifyEmail = async (req, res) => {
+    try {
+        const { token } = req.query;
+        if (!token) return res.status(400).json({ message: "Invalid token" });
+
+        const decoded = jwt.verify(token, 'test');
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        user.isVerified = true;
+        await user.save();
+
+        res.status(200).json({ message: "Email verified successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Invalid or expired token" });
+    }
+};
 
 
 
 
-module.exports = { register };
+
+
+module.exports = { register, verifyEmail };
