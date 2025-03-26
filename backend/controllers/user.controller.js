@@ -47,6 +47,46 @@ const register = async (req, res) => {
     }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const verifyEmail = async (req, res) => {
     try {
         const { token } = req.query;
