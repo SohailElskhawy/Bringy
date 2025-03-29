@@ -51,16 +51,28 @@ const register = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
     try {
+        // get token from query params
         const { token } = req.query;
+
+        // check if token is valid
         if (!token) return res.status(400).json({ message: "Invalid token" });
 
+        // verify token and get user id
         const decoded = jwt.verify(token, 'test');
         const user = await User.findById(decoded.id);
+
         if (!user) return res.status(404).json({ message: "User not found" });
 
+        if (user.isVerified) return res.status(400).json({ message: "User already verified" });
+
+        // update user to verified
         user.isVerified = true;
+
+
+        // save user
         await user.save();
 
+        // send success response
         res.status(200).json({ message: "Email verified successfully" });
         console.log("Email verified successfully");
     } catch (error) {
@@ -91,7 +103,7 @@ const adminLogin = async (req, res) => {
         }
 
         // Step 6: Return login token using JWT with 201 status
-        if (user.role !== 'admin') {
+        if (user.role !== 'admin' && user.role !== 'delivery') {
             return res.status(403).json({ message: 'Not authorized' });
         }
 
@@ -102,7 +114,7 @@ const adminLogin = async (req, res) => {
         };
 
         // Sign JWT token (you can replace 'your-secret-key' with an actual secret key)
-        const token = jwt.sign(payload, 'your-secret-key', { expiresIn: '1h' });
+        const token = jwt.sign(payload, 'test', { expiresIn: '1h' });
 
         // Send response with the token
         res.status(201).json({
