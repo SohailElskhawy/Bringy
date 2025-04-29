@@ -26,7 +26,7 @@ function CustomerRegister() {
             },
             body: JSON.stringify(data)
         }).then((res) => {
-            navigate('/customer/login')
+            navigate('/')
             return res.json()
         }).then((data) => {
             console.log(data)

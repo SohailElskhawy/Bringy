@@ -47,7 +47,49 @@ const register = async (req, res) => {
     }
 };
 
+const login = async (req, res) => {
+    try {
+        // get user's email & password 
+        const { email, password } = req.body;
 
+        // check if password & email valid
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        // Check if email exists in the database
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // comparing hashed password with user's password 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        // Step 6: Return login token using JWT with 201 status
+        const token = jwt.sign({ id: user._id }, 'test', { expiresIn: "1h" });
+
+        // Send response with the token
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
 
 const verifyEmail = async (req, res) => {
     try {
@@ -120,6 +162,13 @@ const adminLogin = async (req, res) => {
         res.status(201).json({
             message: 'Login successful',
             token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified
+            }
         });
 
     } catch (error) {
@@ -129,4 +178,4 @@ const adminLogin = async (req, res) => {
 };
 
 
-module.exports = { register, verifyEmail, adminLogin };
+module.exports = { register, verifyEmail, adminLogin, login };
