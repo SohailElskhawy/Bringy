@@ -54,6 +54,26 @@ router.get('/products/search/:searchTerm', async (req, res) => {
     }
 });
 
+
+router.delete('/products/:id', async (req, res) => {
+    try {
+        await deleteProduct(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error in product.route.js" });
+    }
+});
+
+
+router.put('/products/:id', async (req, res) => {
+    try {
+        await updateProduct(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error in product.route.js" });
+    }
+});
+
 // from product.controller.js
 router.delete('/products/:id', deleteProduct);
 router.put('/products/:id', updateProduct);
