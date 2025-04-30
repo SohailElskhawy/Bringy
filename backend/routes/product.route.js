@@ -52,3 +52,7 @@ router.get('/products/search/:searchTerm', async (req, res) => {
         res.status(500).json({ message: "Server error in product.route.js" });
     }
 });
+
+// from product.controller.js
+router.delete('/products/:id', deleteProduct);
+router.put('/products/:id', updateProduct);
