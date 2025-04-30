@@ -150,4 +150,5 @@ module.exports = {
     sortProductsByPrice,
     getProductsBySearchTerm,
     updateProduct,
+    deleteProduct
 };

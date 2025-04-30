@@ -66,7 +66,15 @@ function AdminOrders() {
             <tr key={order.id}>
               <td>{order.id}</td>
               <td>{order.customerId}</td>
-              <td>{order.is_delivered ? 'Yes' : 'No'}</td>
+              <td>
+                <select value={order.is_delivered} onChange={(e) => {
+                  // Logic to update the delivery status
+                  console.log(`Update delivery status for order ${order.id} to ${e.target.value}`);
+                }}>
+                  <option value="true" selected={order.is_delivered}>Yes</option>
+                  <option value="false" selected={!order.is_delivered}>No</option>
+                </select>
+              </td>
               <td>{order.createdAt}</td>
               <td>{order.updatedAt}</td>
               <td>{order.paymentMethod}</td>

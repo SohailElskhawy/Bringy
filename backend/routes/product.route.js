@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {addProduct, getProductsByCategory,
     getAllProducts, sortProductsByPrice, 
-    getProductsBySearchTerm} = require('../controllers/product.controller');
+    getProductsBySearchTerm, deleteProduct,
+    updateProduct} = require('../controllers/product.controller');
 
 
 router.post('/products', async (req, res) => {
@@ -56,3 +57,5 @@ router.get('/products/search/:searchTerm', async (req, res) => {
 // from product.controller.js
 router.delete('/products/:id', deleteProduct);
 router.put('/products/:id', updateProduct);
+
+module.exports = router;
