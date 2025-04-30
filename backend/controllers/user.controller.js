@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
-const sendVerificationEmail = require('../services/sendVerificationEmail');
-
 const register = async (req, res) => {
     try {
         // get user input
@@ -35,11 +33,17 @@ const register = async (req, res) => {
         // create token for email verification
         const token = jwt.sign({ email: user.email, id: user._id }, 'test', { expiresIn: "1h" });
 
-        // send email verification link
-        await sendVerificationEmail(user.email, user.name, token);
 
         res.status(201).json({
-            message: "User registered successfully. Please check your email for verification.",
+            message: "User registered successfully.",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified
+            },
+            token,
         });
     } catch (error) {
         console.error(error);
