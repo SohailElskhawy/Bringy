@@ -9,13 +9,13 @@ const Product = require('../models/product.model');
     
     - getProductsByCategory (Done)
 
-    - sortProductsByPrice
+    - sortProductsByPrice (Done)
 
-    getProductsBySearchTerm
+    getProductsBySearchTerm (Done)
     
-    - updateProduct
+    - updateProduct     (Done)
     
-    - deleteProduct
+    - deleteProduct     (Done)
 
 */
 
@@ -101,6 +101,43 @@ const getProductsBySearchTerm = async (req, res) => {
 }
 
 
+// update product by ID
+const updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params; // Product ID from the request parameters
+        const updates = req.body; // Updated fields from the request body
+
+        const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true }).populate('category_id').populate('supplier_id');
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json(updatedProduct);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// deleteProduct    // delete product by ID
+const deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params; // Product ID from the request parameters
+
+        const deletedProduct = await Product.findByIdAndUpdate(id, { is_deleted: true }, { new: true });
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ message: "Product deleted successfully", product: deletedProduct });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 
 
 
@@ -109,8 +146,6 @@ module.exports = {
     getProductsByCategory,
     getAllProducts,
     sortProductsByPrice,
-    getProductsBySearchTerm
-    // updateProduct,
-    // deleteProduct
-    
+    getProductsBySearchTerm,
+    updateProduct,
 };
