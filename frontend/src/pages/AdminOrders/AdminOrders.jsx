@@ -73,7 +73,7 @@ function AdminOrders() {
     <div className="admin-orders-container">
       <header className="admin-header">
         <nav>
-          <button onClick={() => navigate("/admin/orders")}>Orders</button>
+          <button onClick={() => navigate("/admin/orders")} className='clicked'>Orders</button>
           <button onClick={() => navigate("/products")}>Products</button>
         </nav>
         <div className="admin-welcome">

@@ -20,6 +20,10 @@
   cursor: pointer;
 }
 
+.products-header nav button.clicked {
+  background-color: #0056b3;
+}
+
 .products-header nav button:hover {
   background-color: #0056b3;
 }

@@ -35,6 +35,13 @@
     border: 1px solid #ccc;
     border-radius: 6px;
   }
+
+  .modal select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
   
   .modal button {
     padding: 10px;

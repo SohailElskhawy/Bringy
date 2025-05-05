@@ -1,5 +1,9 @@
+import useCategories from '../../hooks/useCategories';
+import useSuppliers from '../../hooks/useSuppliers';
 import './AddProductModel.css';
 function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
+    const {categories, loading } = useCategories();
+    const {suppliers} = useSuppliers();
     return (
         <div className="modal-overlay">
             <div className="modal">
@@ -24,18 +28,34 @@ function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
                     value={product.image_url}
                     onChange={(e) => setProduct({ ...product, image_url: e.target.value })}
                 />
-                <input
-                    type="text"
-                    placeholder="Category"
+                <select
                     value={product.category_id}
                     onChange={(e) => setProduct({ ...product, category_id: e.target.value })}
-                />
-                <input
-                    type="text"
-                    placeholder="Supplier"
+                >
+                    <option value="" disabled>Select Category</option>
+                    {loading ? (
+                        <option>Loading...</option>
+                    ) : (
+                        categories.map((category) => (
+                            <option key={category._id} value={category._id}>
+                                {category.name}
+                            </option>
+                        ))
+                    )}
+                </select>
+                <select
                     value={product.supplier_id}
                     onChange={(e) => setProduct({ ...product, supplier_id: e.target.value })}
-                />
+                >
+                    <option value="" disabled>Select Supplier</option>
+                    {suppliers.map((supplier) => (
+                        <option key={supplier._id} value={supplier._id}>
+                            {supplier.name}
+                        </option>
+                    ))}
+                </select>
+
+
                 <button onClick={onSubmit}>
                     {mode === 'Add' ? "Add " : "Edit "}Product
                 </button>

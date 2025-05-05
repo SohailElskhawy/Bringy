@@ -7,17 +7,17 @@ import useProducts from '../../hooks/useProducts';
 import LoadingModel from '../../components/LoadingModel/LoadingModel';
 import CategoryModel from '../../components/CategoryModel/CategoryModel';
 import SupplierModel from '../../components/SupplierModel/SupplierModel';
-
+import MessageModel from '../../components/MessageModel/MessageModel';
 
 function Products() {
-	const { products, loading, getCategoryName, getSupplierName, refresh } = useProducts();
+	const { products, loading, refresh } = useProducts();
 
 	const [username] = useState('Admin');
 	const navigate = useNavigate();
 	const [isAddProductModelOpen, setIsAddProductModelOpen] = useState(false);
 	const [isAddCategoryModelOpen, setIsAddCategoryModelOpen] = useState(false);
 	const [isAddSupplierModelOpen, setIsAddSupplierModelOpen] = useState(false);
-
+	const [message, setMessage] = useState('');
 
 	const [product, setProduct] = useState({
 		name: '',
@@ -53,12 +53,13 @@ function Products() {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					if (data.success) {
-						console.log('Product updated successfully:', data.product);
+					if (data) {
+						console.log('Product updated successfully:', data);
+						setMessage('Product updated successfully!');
 						setIsAddProductModelOpen(false);
 						refresh();
 					} else {
-						console.error('Error updating product:', data.message);
+						console.error('Error updating product:', data);
 					}
 				})
 				.catch((error) => {
@@ -77,11 +78,12 @@ function Products() {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					if (data.success) {
-						console.log('Product deleted successfully:', data.product);
+					if (data) {
+						console.log('Product deleted successfully:', data);
+						setMessage('Product deleted successfully!');
 						refresh();
 					} else {
-						console.error('Error deleting product:', data.message);
+						console.error('Error deleting product:', data);
 					}
 				})
 				.catch((error) => {
@@ -104,12 +106,13 @@ function Products() {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					if (data.success) {
-						console.log('Product added successfully:', data.product);
+					if (data) {
+						console.log('Product added successfully:', data);
+						setMessage('Product added successfully!');
 						setIsAddProductModelOpen(false);
 						refresh();
 					} else {
-						console.error('Error adding product:', data.message);
+						console.error('Error adding product:', data);
 					}
 				})
 				.catch((error) => {
@@ -132,12 +135,14 @@ function Products() {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					if (data.success) {
-						console.log('Category added successfully:', data.category);
+					console.log('Response data:', data);
+					if (data) {
+						console.log('Category added successfully:', data);
+						setMessage('Category added successfully!');
 						setIsAddCategoryModelOpen(false);
 						refresh();
 					} else {
-						console.error('Error adding category:', data.message);
+						console.error('Error adding category:', data);
 					}
 				})
 				.catch((error) => {
@@ -160,12 +165,13 @@ function Products() {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					if (data.success) {
-						console.log('Supplier added successfully:', data.supplier);
+					if (data) {
+						console.log('Supplier added successfully:', data);
+						setMessage('Supplier added successfully!');
 						setIsAddSupplierModelOpen(false);
 						refresh();
 					} else {
-						console.error('Error adding supplier:', data.message);
+						console.error('Error adding supplier:', data);
 					}
 				})
 				.catch((error) => {
@@ -177,12 +183,40 @@ function Products() {
 		}
 	};
 
+	const handleRestore = (productId) => {
+		try {
+			fetch(`http://localhost:5000/api/products/products/restore/${productId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ is_deleted: false }),
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					if (data) {
+						console.log('Product restored successfully:', data);
+						setMessage('Product restored successfully!');
+						refresh();
+					} else {
+						console.error('Error restoring product:', data);
+					}
+				})
+				.catch((error) => {
+					console.error('Error restoring product:', error);
+				});
+		}
+		catch (error) {
+			console.error('Error:', error);
+		}
+	}
+
 	return (
 		<div className="products-container">
 			<header className="products-header">
 				<nav>
 					<button onClick={() => navigate('/admin/orders')}>Orders</button>
-					<button onClick={() => navigate('/products')}>Products</button>
+					<button onClick={() => navigate('/products')} className='clicked'>Products</button>
 				</nav>
 				<div className="products-welcome">
 					<span>Welcome, {username}</span>
@@ -236,7 +270,7 @@ function Products() {
 				<AddProductModel
 					product={product}
 					setProduct={setProduct}
-					onSubmit={isEditMode ? handleEdit : handleAddProduct}
+					onSubmit={isEditMode ? () => handleEdit(product._id) : handleAddProduct}
 					onClose={() => setIsAddProductModelOpen(false)}
 					mode={isEditMode ? 'Edit' : 'Add'}
 				/>
@@ -244,9 +278,13 @@ function Products() {
 
 			{showConfirm && (
 				<YesNoModel
-					message="Are you sure you want to delete this product?"
+					message={product.is_deleted ? 'Are you sure you want to restore this product?' : 'Are you sure you want to delete this product?'}
 					onYes={() => {
-						handleDelete(product.id);
+						if (!product.is_deleted) {
+							handleDelete(product._id);
+						} else {
+							handleRestore(product._id);
+						}
 						setShowConfirm(false);
 					}}
 					onNo={() => setShowConfirm(false)}
@@ -286,20 +324,22 @@ function Products() {
 								<th>Price ($)</th>
 								<th>Category</th>
 								<th>Supplier</th>
+								<th>Is Deleted</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							{products.map((product) => (
-								<tr key={product.id}>
-									<td>{product.id}</td>
+							{products.map((product,index) => (
+								<tr key={product._id}>
+									<td>{index+1}</td>
 									<td>
 										<img src={product.image_url} alt={product.name} width="60" height="60" />
 									</td>
 									<td>{product.name}</td>
 									<td>{product.price.toFixed(2)}</td>
-									<td>{getCategoryName(product.category_id)}</td>
-									<td>{getSupplierName(product.supplier_id)}</td>
+									<td>{product.category_id.name}</td>
+									<td>{product.supplier_id.name}</td>
+									<td>{product.is_deleted ? 'Yes' : 'No'}</td>
 									<td>
 										<button onClick={() => {
 											setProduct(product);
@@ -310,7 +350,9 @@ function Products() {
 											setProduct(product);
 											setShowConfirm(true);
 										}
-										}>Delete</button>
+										}>
+											{product.is_deleted ? 'Restore' : 'Delete'}
+										</button>
 									</td>
 								</tr>
 							))}
@@ -322,6 +364,14 @@ function Products() {
 			}
 
 			{loading && <LoadingModel />}
+			{
+				message && (
+					<MessageModel
+						message={message}
+						onClose={() => setMessage('')}
+					/>
+				)
+			}
 		</div>
 	);
 }
