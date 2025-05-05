@@ -17,6 +17,8 @@ const Product = require('../models/product.model');
     
     - deleteProduct    (Done)
 
+    - restoreProduct (Done)
+
 */
 
 
@@ -141,6 +143,26 @@ const deleteProduct = async (req, res) => {
 };
 
 
+// restoreProduct // restore product by ID
+
+const restoreProduct = async (req, res) => {
+    try {
+        const { id } = req.params; // Product ID from the request parameters
+
+        const restoredProduct = await Product.findByIdAndUpdate(id, { is_deleted: false }, { new: true });
+
+        if (!restoredProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ message: "Product restored successfully", product: restoredProduct });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
 
 
 module.exports = {
@@ -150,5 +172,6 @@ module.exports = {
     sortProductsByPrice,
     getProductsBySearchTerm,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    restoreProduct
 };

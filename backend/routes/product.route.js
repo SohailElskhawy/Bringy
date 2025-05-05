@@ -4,7 +4,7 @@ const router = express.Router();
 const {addProduct, getProductsByCategory,
     getAllProducts, sortProductsByPrice, 
     getProductsBySearchTerm, deleteProduct,
-    updateProduct} = require('../controllers/product.controller');
+    updateProduct, restoreProduct} = require('../controllers/product.controller');
 
 
 router.post('/products', async (req, res) => {
@@ -77,5 +77,7 @@ router.put('/products/:id', async (req, res) => {
 // from product.controller.js
 router.delete('/products/:id', deleteProduct);
 router.put('/products/:id', updateProduct);
+router.put('/products/restore/:id', restoreProduct);
+
 
 module.exports = router;
