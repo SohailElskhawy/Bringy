@@ -5,6 +5,8 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/user.route');
 const productRoutes = require('./routes/product.route');
 const categoryRoutes = require('./routes/category.route');
+const orderRoutes = require('./routes/order.route');
+const supplierRoutes = require('./routes/supplier.route');
 dotenv.config();
 
 const app = express();
@@ -14,6 +16,8 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes)
 app.use('/api/categories', categoryRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/suppliers', supplierRoutes);
 
 app.listen(5000, () =>{
     connectDB();

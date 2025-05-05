@@ -1,37 +1,73 @@
 import { useState } from 'react';
 import './AdminOrders.css';
 import { useNavigate } from 'react-router-dom';
+import useOrders from '../../hooks/useOrders';
+import PrintOrder from '../../components/PrintOrder/PrintOrder';
+import OrderItemsModel from '../../components/OrderItemsModel/OrderItemsModel';
+import LoadingModel from '../../components/LoadingModel/LoadingModel';
 
-const fakeData = [
-  {
-    id: 1,
-    customerId: 101,
-    is_delivered: true,
-    createdAt: '2023-10-01',
-    updatedAt: '2023-10-02',
-    paymentMethod: 'Credit Card',
-    totalPrice: 50.00,
-  }
-];
 
 function AdminOrders() {
+  const { orders, loading, refresh } = useOrders(); 
   const navigate = useNavigate();
-  const [username] = useState('Admin'); // Replace with actual user info if available
+  const [username] = useState('Admin');
 
-  const handleSignOut = () => {
-    // Add your sign-out logic here
-    console.log('Signing out...');
-  };
+  const [isOrderItemsModelOpen, setIsOrderItemsModelOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [printOrderData, setPrintOrderData] = useState(null);
+
 
   const handleSeeItems = (orderId) => {
-    // Logic to see items in the order
-    console.log(`See items for order ${orderId}`);
+    setSelectedOrderId(orderId);
+    setIsOrderItemsModelOpen(true);
   };
 
-  const handlePrint = (orderId) => {
-    // Logic to print the order
-    console.log(`Print order ${orderId}`);
+  const handleSignOut = () => {
+    navigate('/admin/login');
   };
+
+  const handlePrint = async (orderId) => {
+    try {
+      const [orderRes, itemsRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/orders/orders/${orderId}`),
+        fetch(`http://localhost:5000/api/order-items/${orderId}`)
+      ]);
+
+      const orderData = await orderRes.json();
+      const itemsData = await itemsRes.json();
+
+      if (orderData.success && itemsData.success) {
+        setPrintOrderData({ ...orderData.order, items: itemsData.items[0]?.products || [] });
+      } else {
+        console.error('Failed to load data for printing');
+      }
+    } catch (err) {
+      console.error('Error printing order:', err);
+    }
+  };
+
+
+  const handleUpdateOrderStatus = (orderId, status) => {
+    fetch(`http://localhost:5000/api/orders/orders/${orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(status),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('Order status updated successfully:', data.order);
+          refresh();
+        } else {
+          console.error('Failed to update order status:', data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating order status:', error);
+      });
+  }
 
   return (
     <div className="admin-orders-container">
@@ -62,31 +98,53 @@ function AdminOrders() {
           </tr>
         </thead>
         <tbody>
-          {fakeData.map(order => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.customerId}</td>
-              <td>
-                <select value={order.is_delivered} onChange={(e) => {
-                  // Logic to update the delivery status
-                  console.log(`Update delivery status for order ${order.id} to ${e.target.value}`);
-                }}>
-                  <option value="true" selected={order.is_delivered}>Yes</option>
-                  <option value="false" selected={!order.is_delivered}>No</option>
-                </select>
-              </td>
-              <td>{order.createdAt}</td>
-              <td>{order.updatedAt}</td>
-              <td>{order.paymentMethod}</td>
-              <td>${order.totalPrice.toFixed(2)}</td>
-              <td>
-                <button onClick={() => handleSeeItems(order.id)}>See Items</button>
-                <button onClick={() => handlePrint(order.id)}>Print</button>
-              </td>
+          {loading ? (
+            <tr>
+              <LoadingModel />
             </tr>
-          ))}
+          ) : orders.length === 0 ? (
+            <tr>
+              <td colSpan="8">No orders found</td>
+            </tr>
+          ) : (
+            orders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id}</td>
+                <td>{order.customerId}</td>
+                <td>{order.is_delivered ? 'Yes' : 'No'}</td>
+                <td>{new Date(order.createdAt).toLocaleString()}</td>
+                <td>{new Date(order.updatedAt).toLocaleString()}</td>
+                <td>{order.paymentMethod}</td>
+                <td>${order.totalPrice.toFixed(2)}</td>
+                <td>
+                  <button onClick={() => handleSeeItems(order._id)}>See Items</button>
+                  <button onClick={() => handlePrint(order._id)}>Print</button>
+                  <button onClick={() => {
+                    handleUpdateOrderStatus(order._id, { is_delivered: !order.is_delivered });
+                  }}>
+                    {order.is_delivered ? 'Mark as Undelivered' : 'Mark as Delivered'}
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
+
+      {isOrderItemsModelOpen && selectedOrderId && (
+        <OrderItemsModel
+          orderId={selectedOrderId}
+          onClose={() => setIsOrderItemsModelOpen(false)}
+        />
+      )}
+
+      {printOrderData && (
+        <PrintOrder
+          order={printOrderData}
+          onClose={() => setPrintOrderData(null)}
+        />
+      )}
+
     </div>
   );
 }
