@@ -163,6 +163,36 @@ const restoreProduct = async (req, res) => {
     }
 }
 
+const filterProducts = async (req, res) => {
+    try {
+        const { category_id, sort, search } = req.query;
+
+        let query = {};
+        if (category_id) {
+            query.category_id = category_id;
+        }
+
+        if (search) {
+            query.name = { $regex: search, $options: 'i' };
+        }
+
+        let sortOption = {};
+
+        if (sort) {
+            sortOption.price = sort === 'asc' ? 1 : -1;
+        }
+
+        const products = await Product.find(query).sort(sortOption).populate('category_id').populate('supplier_id');
+        if (!products) {
+            return res.status(404).json({ message: "No products found" });
+        }
+        res.status(200).json(products);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
 
 
 module.exports = {
@@ -173,5 +203,6 @@ module.exports = {
     getProductsBySearchTerm,
     updateProduct,
     deleteProduct,
-    restoreProduct
+    restoreProduct,
+    filterProducts
 };

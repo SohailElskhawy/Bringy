@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 
-function useProducts() {
+function useProducts(category = '', sortOrder = '', search = '') {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 
-	const fetchData = async () => {
+	const fetchFilteredProducts = async () => {
 		setLoading(true);
 		try {
-			const [productsRes] = await Promise.all([
-				fetch('http://localhost:5000/api/products/products')
-			]);
-			const productsData = await productsRes.json();
+			const params = new URLSearchParams();
+			if (category) params.append('category_id', category);
+			if (sortOrder) params.append('sort', sortOrder);
+			if (search) params.append('search', search);
+
+			const res = await fetch(`http://localhost:5000/api/products/products/filter?${params.toString()}`);
+			const productsData = await res.json();
 			setProducts(productsData);
 		} catch (err) {
 			console.error('Failed to fetch data', err);
@@ -20,14 +23,14 @@ function useProducts() {
 	};
 
 	useEffect(() => {
-		fetchData();
-	}, []);
-
+		fetchFilteredProducts();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [category, sortOrder, search]);
 
 	return {
 		products,
 		loading,
-		refresh: fetchData
+		refresh: fetchFilteredProducts
 	};
 }
 

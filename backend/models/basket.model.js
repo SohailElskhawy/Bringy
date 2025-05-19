@@ -1,21 +1,13 @@
 const mongoose = require('mongoose');
 const basketSchema = new mongoose.Schema({
 
-     customerId: {
+    customerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
 
-    // Basket ID
-    basketId: {
-        type: String,
-        required: true,
-        unique: true
-    },
-
-    // Product List <Product, quantity>
-    productList: [
+    products: [
         {
             productId: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -37,6 +29,6 @@ const basketSchema = new mongoose.Schema({
 }
 );
 
-const Basket = mongoose.model('basket', orderSchema);
+const Basket = mongoose.model('basket', basketSchema);
 
-module.exports = basket;
+module.exports = Basket;

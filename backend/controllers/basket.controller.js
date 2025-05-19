@@ -1,155 +1,167 @@
 const Basket = require('../models/basket.model');
 
-/* 
-    -removeProduct (DONE)
+/*
+  Functions:
+  - getBasket
+  - removeProduct
+  - increaseQuantity
+  - decreaseQuantity
+  - clearBasket
+  - addProductToBasket
+*/
 
-    -increaseQuantity (DONE)
 
-    -decreaseQuantity    (DONE)
+const getBasket = async (req, res) => {
+	try {
+		const { customerId } = req.params;
 
-    -removeAllProducts   (DONE)
+		const basket = await Basket.find
+			({ customerId })
+			.populate("products.productId", "name price image_url");
+		if (!basket) return res.status(404).json({ message: "Basket not found" });
+		res.status(200).json(basket);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
+};
 
-    -addProductToBasket (DONE)
 
-    */
+
+
+// REMOVE A PRODUCT FROM BASKET
 const removeProduct = async (req, res) => {
-    try {
-        const { basketId, productId } = req.body;
+	try {
+		const { customerId, productId } = req.body;
 
-        const basket = await Basket.findOne({ basketId });
-        if (!basket) {
-            return res.status(404).json({ message: "Basket not found" });
-        }
+		const basket = await Basket.findOne({ customerId });
+		if (!basket) return res.status(404).json({ message: "Basket not found" });
 
-        basket.productList = basket.productList.filter(
-            (item) => item.productId.toString() !== productId
-        );
+		basket.products = basket.products.filter(
+			(item) => item.productId.toString() !== productId
+		);
 
-        await basket.save();
-        res.status(200).json({ message: "Product removed successfully", basket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+		await basket.save();
+		res.status(200).json({ message: "Product removed successfully", basket });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
 
+// INCREASE PRODUCT QUANTITY
 const increaseQuantity = async (req, res) => {
-    try {
-        const { basketId, productId } = req.body;
+	try {
+		const { customerId, productId } = req.body;
 
-        const basket = await Basket.findOne({ basketId });
-        if (!basket) {
-            return res.status(404).json({ message: "Basket not found" });
-        }
+		const basket = await Basket.findOne({ customerId });
+		if (!basket) return res.status(404).json({ message: "Basket not found" });
 
-        const product = basket.productList.find(
-            (item) => item.productId.toString() === productId
-        );
+		const product = basket.products.find(
+			(item) => item.productId.toString() === productId
+		);
 
-        if (!product) {
-            return res.status(404).json({ message: "Product not found in basket" });
-        }
+		if (!product) return res.status(404).json({ message: "Product not found in basket" });
 
-        product.quantity += 1;
+		product.quantity += 1;
 
-        await basket.save();
-        res.status(200).json({ message: "Product quantity increased", basket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+		await basket.save();
+		res.status(200).json({ message: "Product quantity increased", basket });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
 
+// DECREASE PRODUCT QUANTITY OR REMOVE IF 1
 const decreaseQuantity = async (req, res) => {
-    try {
-        const { basketId, productId } = req.body;
+	try {
+		const { customerId, productId } = req.body;
 
-        const basket = await Basket.findOne({ basketId });
-        if (!basket) {
-            return res.status(404).json({ message: "Basket not found" });
-        }
+		const basket = await Basket.findOne({ customerId });
+		if (!basket) return res.status(404).json({ message: "Basket not found" });
 
-        const product = basket.productList.find(
-            (item) => item.productId.toString() === productId
-        );
+		const product = basket.products.find(
+			(item) => item.productId.toString() === productId
+		);
 
-        if (!product) {
-            return res.status(404).json({ message: "Product not found in basket" });
-        }
+		if (!product) return res.status(404).json({ message: "Product not found in basket" });
 
-        if (product.quantity > 1) {
-            product.quantity -= 1;
-        } else {
-            basket.productList = basket.productList.filter(
-                (item) => item.productId.toString() !== productId
-            );
-        }
+		if (product.quantity > 1) {
+			product.quantity -= 1;
+		} else {
+			basket.products = basket.products.filter(
+				(item) => item.productId.toString() !== productId
+			);
+		}
 
-        await basket.save();
-        res.status(200).json({ message: "Product quantity decreased", basket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+		await basket.save();
+		res.status(200).json({ message: "Product quantity updated", basket });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
 
+// REMOVE ALL PRODUCTS FROM BASKET
 const clearBasket = async (req, res) => {
-    try {
-        const { basketId } = req.body;
+	try {
+		const { customerId } = req.body;
 
-        const basket = await Basket.findOne({ basketId });
-        if (!basket) {
-            return res.status(404).json({ message: "Basket not found" });
-        }
+		const basket = await Basket.findOne({ customerId });
+		if (!basket) return res.status(404).json({ message: "Basket not found" });
 
-        basket.productList = [];
+		basket.products = [];
 
-        await basket.save();
-        res.status(200).json({ message: "All products removed from basket", basket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+		await basket.save();
+		res.status(200).json({ message: "Basket cleared", basket });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
 
+// ADD A PRODUCT TO BASKET
 const addProductToBasket = async (req, res) => {
-    try {
-        const { basketId, productId, quantity } = req.body;
+	try {
+		const { customerId, productId, quantity } = req.body;
 
-        if (!basketId || !productId || !quantity) {
-            return res.status(400).json({ message: "Basket ID, Product ID, and Quantity are required" });
-        }
+		const parsedQuantity = parseInt(quantity);
+		if (!customerId || !productId || isNaN(parsedQuantity) || parsedQuantity < 1) {
+			return res.status(400).json({ message: "Valid Customer ID, Product ID, and Quantity are required" });
+		}
 
-        const basket = await Basket.findOne({ basketId });
-        if (!basket) {
-            return res.status(404).json({ message: "Basket not found" });
-        }
+		let basket = await Basket.findOne({ customerId });
 
-        const existingProduct = basket.productList.find(
-            (item) => item.productId.toString() === productId
-        );
+		// Create basket if it doesn't exist
+		if (!basket) {
+			basket = new Basket({ customerId, products: [] });
+		}
 
-        if (existingProduct) {
-            // If the product already exists in the basket, increase its quantity
-            existingProduct.quantity += quantity;
-        } else {
-            // If the product does not exist
-            basket.productList.push({ productId, quantity });
-        }
+		const existingProduct = basket.products.find(
+			(item) => item.productId.toString() === productId.toString()
+		);
 
-        await basket.save();
-        res.status(200).json({ message: "Product added to basket successfully", basket });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-    }
+		if (existingProduct) {
+			existingProduct.quantity += parsedQuantity;
+		} else {
+			basket.products.push({ productId, quantity: parsedQuantity });
+		}
+
+		await basket.save();
+		res.status(200).json({ message: "Product added to basket", basket });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Server error" });
+	}
 };
+
 
 module.exports = {
-    removeProduct,
-    increaseQuantity,
-    decreaseQuantity,
-    clearBasket,
-    addProductToBasket,
+	removeProduct,
+	increaseQuantity,
+	decreaseQuantity,
+	clearBasket,
+	addProductToBasket,
+	getBasket
 };
-

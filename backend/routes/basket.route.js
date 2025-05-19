@@ -6,6 +6,7 @@ const {
     decreaseQuantity,
     clearBasket,
     addProductToBasket,
+    getBasket
 } = require('../controllers/basket.controller');
 
 
@@ -48,6 +49,15 @@ router.post('/basket/decrease-quantity', async (req, res) => {
 router.post('/basket/clear', async (req, res) => {
     try {
         await clearBasket(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error in basket.route.js" });
+    }
+});
+
+router.get('/basket/:customerId', async (req, res) => {
+    try {
+        await getBasket(req, res);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error in basket.route.js" });

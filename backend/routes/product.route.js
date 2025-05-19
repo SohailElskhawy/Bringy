@@ -4,7 +4,7 @@ const router = express.Router();
 const {addProduct, getProductsByCategory,
     getAllProducts, sortProductsByPrice, 
     getProductsBySearchTerm, deleteProduct,
-    updateProduct, restoreProduct} = require('../controllers/product.controller');
+    updateProduct, restoreProduct, filterProducts} = require('../controllers/product.controller');
 
 
 router.post('/products', async (req, res) => {
@@ -78,6 +78,16 @@ router.put('/products/:id', async (req, res) => {
 router.delete('/products/:id', deleteProduct);
 router.put('/products/:id', updateProduct);
 router.put('/products/restore/:id', restoreProduct);
+
+router.get('/products/filter', async (req, res) => {
+    try {
+        await filterProducts(req, res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error in product.route.js" });
+    }
+
+});
 
 
 module.exports = router;
