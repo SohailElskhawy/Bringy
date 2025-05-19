@@ -3,15 +3,27 @@ import './Basket.css';
 import useGetBasket from '../../hooks/useGetBasket';
 import { useState } from 'react';
 import LoadingModel from '../../components/LoadingModel/LoadingModel';
+import EmailVerificationModel from '../../components/EmailVerificationModel/EmailVerificationModel';
+import { getUser } from '../../utils/getUser';
 
 function Basket() {
 	const navigate = useNavigate();
 	const [customer] = useState(JSON.parse(localStorage.getItem('user')));
 	const { basket, loading } = useGetBasket(customer?.id);
-	
+	const [verificationModal, setVerificationModal] = useState(false);
 
-	const handleCheckout = () => {
-		navigate('/checkout');
+	const handleCheckout = async() => {
+		// check if the customer is verified
+		const user = await getUser(customer.id);
+		console.log(user);
+		if (!user.isVerified) {
+			setVerificationModal(true);
+		} else {
+			navigate('/checkout');
+		}
+
+
+
 	};
 
 	const handleIncrease = async (productId) => {
@@ -126,6 +138,7 @@ function Basket() {
 
 	}
 
+
 	return (
 		<div className="basket-container">
 			<header className="basket-header">
@@ -149,11 +162,11 @@ function Basket() {
 											<span>{item.productId.price} TL</span>
 										</div>
 										<div className="quantity">
-											<button onClick={() => 
+											<button onClick={() =>
 												handleDecrease(item.productId._id)
 											}>
 												<svg fill="none" viewBox="0 0 24 24" height="14" width="14" xmlns="http://www.w3.org/2000/svg">
-													<path  stroke="#47484b" d="M20 12L4 12"></path>
+													<path stroke="#47484b" d="M20 12L4 12"></path>
 												</svg>
 											</button>
 											<label>
@@ -161,14 +174,14 @@ function Basket() {
 											</label>
 											<button onClick={() => handleIncrease(item.productId._id)}>
 												<svg fill="none" viewBox="0 0 24 24" height="14" width="14" xmlns="http://www.w3.org/2000/svg">
-													<path   stroke="#47484b" d="M12 4V20M20 12H4"></path>
+													<path stroke="#47484b" d="M12 4V20M20 12H4"></path>
 												</svg>
 											</button>
 										</div>
-										<button className="remove-btn" onClick={() => 
+										<button className="remove-btn" onClick={() =>
 											handleRemove(item.productId._id)
 										}>
-											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"/></svg>
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z" /></svg>
 										</button>
 									</div>
 								))}
@@ -197,6 +210,12 @@ function Basket() {
 			{loading && (
 				<LoadingModel />
 			)}
+
+			{
+				verificationModal && (
+					<EmailVerificationModel setVerificationModal={setVerificationModal}/>
+				)
+			}
 		</div>
 	);
 }

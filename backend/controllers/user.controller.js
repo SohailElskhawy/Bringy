@@ -181,5 +181,27 @@ const adminLogin = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isVerified: user.isVerified
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
 
-module.exports = { register, verifyEmail, adminLogin, login };
+
+
+module.exports = { register, verifyEmail, adminLogin, login, getUser };
