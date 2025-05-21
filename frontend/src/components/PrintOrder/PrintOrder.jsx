@@ -6,7 +6,7 @@ function PrintOrder({ order, onClose }) {
     setTimeout(() => {
       window.print();
       onClose(); // Close print view after printing
-    }, 100);
+    }, 1000);
   }, [onClose]);
 
   if (!order) return null;
@@ -20,13 +20,14 @@ function PrintOrder({ order, onClose }) {
       <p><strong>Updated At:</strong> {new Date(order.updatedAt).toLocaleString()}</p>
       <p><strong>Delivered:</strong> {order.is_delivered ? 'Yes' : 'No'}</p>
       <p><strong>Payment:</strong> {order.paymentMethod}</p>
-      <p><strong>Total Price:</strong> ${order.totalPrice.toFixed(2)}</p>
+      <p><strong>Total Price:</strong> {order.totalPrice.toFixed(2)} TL</p>
 
       <h2>Items</h2>
       <table className="print-items-table">
         <thead>
           <tr>
-            <th>Product ID</th>
+            <th>Product Image</th>
+            <th>Product Name</th>
             <th>Qty</th>
             <th>Price</th>
           </tr>
@@ -34,7 +35,10 @@ function PrintOrder({ order, onClose }) {
         <tbody>
           {order.items?.map((item, idx) => (
             <tr key={idx}>
-              <td>{item.productId}</td>
+              <td>
+                <img src={item.productId.image_url} alt={item.productId.name} className="product-image-table" />
+              </td>
+              <td>{item.productId.name}</td>
               <td>{item.quantity}</td>
               <td>${item.price.toFixed(2)}</td>
             </tr>

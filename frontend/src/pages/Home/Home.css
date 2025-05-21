@@ -105,6 +105,13 @@
   gap: 10px;
 }
 
+.product-info h3,p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
 .product-info button {
   background: #5a67d8;
   color: white;

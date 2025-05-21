@@ -85,6 +85,7 @@ function Home() {
 								<span>Hi, {user.name}</span>
 								<button onClick={() => handleLogout()}>Logout</button>
 								<button onClick={() => navigate('/basket')}>Basket</button>
+								<button onClick={() => navigate('/customer/orders')}>Orders</button>
 							</div>
 						) : (
 							<div className="login-signup">
@@ -136,7 +137,7 @@ function Home() {
 							<div key={product._id} className="product-card">
 								<img src={product.image_url} alt={product.name} className='product-img' />
 								<div className="product-info">
-									<h3>{product.name}</h3>
+									<h3 title={product.name}>{product.name}</h3>
 									<p>Supplier: {product.supplier_id.name}</p>
 									<p>Price: {product.price.toFixed(2)} TL</p>
 									<button onClick={() => addToBasket(product._id)}>Add to Basket</button>

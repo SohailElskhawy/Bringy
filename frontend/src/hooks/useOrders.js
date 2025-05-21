@@ -9,8 +9,9 @@ const useOrders = () => {
         try {
             const response = await fetch('http://localhost:5000/api/orders/orders');
             const data = await response.json();
-            if (data.success) {
-                setOrders(data.orders);
+            console.log(data);
+            if (data) {
+                setOrders(data);
             }
         } catch (err) {
             console.error('Failed to fetch orders', err);
@@ -18,7 +19,6 @@ const useOrders = () => {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchOrders();
     }, []);
@@ -27,3 +27,9 @@ const useOrders = () => {
 }
 
 export default useOrders;
+
+/*
+
+
+
+*/

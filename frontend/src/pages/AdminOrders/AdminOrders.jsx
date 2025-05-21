@@ -23,21 +23,24 @@ function AdminOrders() {
   };
 
   const handleSignOut = () => {
-    navigate('/admin/login');
+    localStorage.removeItem('token');
+		localStorage.removeItem('user');
+		navigate('/admin/login');
   };
 
   const handlePrint = async (orderId) => {
     try {
       const [orderRes, itemsRes] = await Promise.all([
         fetch(`http://localhost:5000/api/orders/orders/${orderId}`),
-        fetch(`http://localhost:5000/api/order-items/${orderId}`)
+        fetch(`http://localhost:5000/api/orderItems/order-items/${orderId}`)
       ]);
 
       const orderData = await orderRes.json();
       const itemsData = await itemsRes.json();
+      console.log(orderData, itemsData);
 
-      if (orderData.success && itemsData.success) {
-        setPrintOrderData({ ...orderData.order, items: itemsData.items[0]?.products || [] });
+      if (orderData && itemsData) {
+        setPrintOrderData({ ...orderData, items: itemsData[0]?.products || [] });
       } else {
         console.error('Failed to load data for printing');
       }
@@ -89,31 +92,29 @@ function AdminOrders() {
           <tr>
             <th>ID</th>
             <th>Customer ID</th>
-            <th>Delivered</th>
             <th>Created At</th>
             <th>Updated At</th>
+            <th>Delivered</th>
+            <th>Address</th>
             <th>Payment</th>
             <th>Total Price</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <LoadingModel />
-            </tr>
-          ) : orders.length === 0 ? (
+          {orders.length === 0 ? (
             <tr>
               <td colSpan="8">No orders found</td>
             </tr>
           ) : (
             orders.map((order) => (
               <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>{order.customerId}</td>
+                <td>{order._id.substring(0, 5) + '...'}</td>
+                <td>{order.customerId.substring(0, 5) + '...'}</td>
+                <td className='date_td'>{new Date(order.createdAt).toLocaleString()}</td>
+                <td className='date_td'>{new Date(order.updatedAt).toLocaleString()}</td>
                 <td>{order.is_delivered ? 'Yes' : 'No'}</td>
-                <td>{new Date(order.createdAt).toLocaleString()}</td>
-                <td>{new Date(order.updatedAt).toLocaleString()}</td>
+                <td>{order.address}</td>
                 <td>{order.paymentMethod}</td>
                 <td>${order.totalPrice.toFixed(2)}</td>
                 <td>
@@ -144,6 +145,8 @@ function AdminOrders() {
           onClose={() => setPrintOrderData(null)}
         />
       )}
+
+      {loading && <LoadingModel />}
 
     </div>
   );

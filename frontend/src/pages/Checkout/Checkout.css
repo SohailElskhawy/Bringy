@@ -1,0 +1,146 @@
+.checkout {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    display: grid;
+    gap: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.checkout h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.checkout__summary {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.checkout .products {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.checkout .product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.checkout .product img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.checkout .product-details {
+    display: flex;
+    flex-direction: row;
+}
+
+.checkout .product-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+
+}
+
+.checkout .product-details h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #222;
+}
+
+.checkout .product-details span {
+    color: #777;
+    font-weight: bold;
+}
+
+.checkout .quantity {
+    text-align: right;
+}
+
+.checkout .quantity label {
+    display: block;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.checkout__form,
+.checkout__payment {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.checkout__form label,
+.checkout__payment label {
+    display: block;
+    margin: 0.75rem 0;
+    color: #333;
+}
+
+.checkout__form input[type="text"] {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+}
+
+.checkout__payment input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.checkout__payment p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.checkout__confirm {
+    padding: 1rem;
+    font-size: 1.1rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.checkout__confirm:hover {
+    background-color: #45a045;
+}
+
+@media (max-width: 768px) {
+    .checkout {
+        padding: 1rem;
+    }
+
+    .product {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .quantity {
+        align-self: flex-end;
+        text-align: left;
+    }
+}

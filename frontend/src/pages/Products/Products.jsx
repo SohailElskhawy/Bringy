@@ -343,6 +343,7 @@ function Products() {
 									<td>
 										<button onClick={() => {
 											setProduct(product);
+											console.log(product);
 											setIsEditMode(true);
 											setIsAddProductModelOpen(true);
 										}}>Edit</button>

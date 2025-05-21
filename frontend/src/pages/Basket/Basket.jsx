@@ -154,12 +154,12 @@ function Basket() {
 						<div className="card cart">
 							<label className="title">Your cart</label>
 							<div className="products">
-								{basket[0].products.map((item) => (
+								{basket && basket[0].products.map((item) => (
 									<div key={item._id} className="product">
 										<img src={item.productId.image_url} alt={item.productId.name} />
 										<div className="product-details">
-											<h3>{item.productId.name}</h3>
-											<span>{item.productId.price} TL</span>
+											<h5>{item.productId.name}</h5>
+											<span>{item.productId.price.toFixed(2)} TL</span>
 										</div>
 										<div className="quantity">
 											<button onClick={() =>
@@ -189,7 +189,6 @@ function Basket() {
 							<button className="clear-btn" onClick={onClear}>Clear Basket</button>
 						</div>
 						<div className="card checkout">
-							<label className="title">Checkout</label>
 							<div className="checkout--footer">
 								<label className="price">{
 									basket[0].products.reduce((total, item) => {

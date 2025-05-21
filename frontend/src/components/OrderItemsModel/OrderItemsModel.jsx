@@ -9,11 +9,11 @@ function OrderItemsModel({ orderId, onClose }) {
         if (!orderId) return;
 
         setLoading(true);
-        fetch(`http://localhost:5000/api/order-items/${orderId}`)
+        fetch(`http://localhost:5000/api/orderItems/order-items/${orderId}`)
             .then((res) => res.json())
             .then((data) => {
-                if (data.success) {
-                    setItems(data.items);
+                if (data) {
+                    setItems(data);
                 } else {
                     console.error('Failed to fetch order items:', data.message);
                 }
@@ -28,8 +28,10 @@ function OrderItemsModel({ orderId, onClose }) {
     return (
         <div className="modal-backdrop">
             <div className="modal-content">
-                <h2>Order Items for {orderId}</h2>
+                <div className="modal-header">
+                <h2>Order Items for {orderId.substring(0,5) + '....'}</h2>
                 <button className="close-button" onClick={onClose}>Close</button>
+                </div>
                 {loading ? (
                     <p>Loading items...</p>
                 ) : items.length === 0 ? (
@@ -38,7 +40,8 @@ function OrderItemsModel({ orderId, onClose }) {
                     <table className="items-table">
                         <thead>
                             <tr>
-                                <th>Product ID</th>
+                                <th>Product Image</th>
+                                <th>Product Name</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                             </tr>
@@ -46,7 +49,10 @@ function OrderItemsModel({ orderId, onClose }) {
                         <tbody>
                             {items[0]?.products?.map((item, idx) => (
                                 <tr key={idx}>
-                                    <td>{item.productId}</td>
+                                    <td>
+                                        <img src={item.productId.image_url} alt={item.productId.name} className="product-image-table" />
+                                    </td>
+                                    <td>{item.productId.name}</td>
                                     <td>{item.quantity}</td>
                                     <td>${item.price.toFixed(2)}</td>
                                 </tr>

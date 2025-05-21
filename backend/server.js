@@ -8,6 +8,8 @@ const categoryRoutes = require('./routes/category.route');
 const orderRoutes = require('./routes/order.route');
 const supplierRoutes = require('./routes/supplier.route');
 const basketRoutes = require('./routes/basket.route');
+const orderItemsRoutes = require('./routes/orderItems.route');
+
 dotenv.config();
 
 const app = express();
@@ -20,8 +22,13 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/basket', basketRoutes);
+app.use('/api/orderItems', orderItemsRoutes);
 
-app.listen(5000, () =>{
+
+
+
+
+app.listen(5000, () => {
     connectDB();
     console.log('Server running on port 5000');
 });

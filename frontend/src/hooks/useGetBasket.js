@@ -11,6 +11,10 @@ function useGetBasket(customerId) {
                     throw new Error('Failed to fetch basket');
                 }
                 const data = await response.json();
+                if (data.length === 0) {
+                    setBasket(null);
+                    return;
+                }
                 setBasket(data);
             } catch (error) {
                 console.error('Error fetching basket:', error);

@@ -29,7 +29,7 @@ function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
                     onChange={(e) => setProduct({ ...product, image_url: e.target.value })}
                 />
                 <select
-                    value={product.category_id}
+                    value={product.category_id._id}
                     onChange={(e) => setProduct({ ...product, category_id: e.target.value })}
                 >
                     <option value="" disabled>Select Category</option>
@@ -44,7 +44,7 @@ function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
                     )}
                 </select>
                 <select
-                    value={product.supplier_id}
+                    value={product.supplier_id._id}
                     onChange={(e) => setProduct({ ...product, supplier_id: e.target.value })}
                 >
                     <option value="" disabled>Select Supplier</option>

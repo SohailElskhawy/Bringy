@@ -21,12 +21,13 @@ const Order = require('../models/order.model');
 // add new order
 const addOrder = async (req, res) => {
     try {
-        const { customerId, is_delivered, paymentMethod, totalPrice } = req.body;
+        const { customerId, is_delivered, paymentMethod, totalPrice, address } = req.body;
         const order = new Order({
             customerId,
             is_delivered,
             paymentMethod,
-            totalPrice
+            totalPrice,
+            address
         });
         await order.save();
         res.status(201).json(order);

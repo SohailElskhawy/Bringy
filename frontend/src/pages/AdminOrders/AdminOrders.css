@@ -81,3 +81,7 @@
     background-color: #218838;
   }
   
+  .date_td {
+    white-space: nowrap;
+    font-size: small;
+  }
