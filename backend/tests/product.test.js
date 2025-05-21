@@ -1,29 +1,13 @@
 const request = require('supertest');
-const app = require('../app');
+const app = require('../server');
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const Product = require('../models/product.model');
 
-let mongoServer;
-
-beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-});
-
-afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-});
-
-afterEach(async () => {
-    await Product.deleteMany();
-});
 
 describe('Product API', () => {
     test('should create a new product', async () => {
         const res = await request(app)
-            .post('/api/products')
+            .post('/api/products/products')
             .send({
                 name: 'Test Product',
                 price: 10.99,
@@ -31,7 +15,7 @@ describe('Product API', () => {
                 category_id: new mongoose.Types.ObjectId(),
                 supplier_id: new mongoose.Types.ObjectId()
             });
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(201);
         expect(res.body.name).toBe('Test Product');
     });
 
@@ -44,7 +28,7 @@ describe('Product API', () => {
             supplier_id: new mongoose.Types.ObjectId()
         });
         const res = await request(app)
-            .get('/api/products');
+            .get('/api/products/products');
         expect(res.statusCode).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
         expect(res.body.length).toBeGreaterThan(0);
@@ -60,7 +44,7 @@ describe('Product API', () => {
             supplier_id: new mongoose.Types.ObjectId()
         });
         const res = await request(app)
-            .get(`/api/products/category/${categoryId}`);
+            .get(`/api/products/products/category/${categoryId}`);
         expect(res.statusCode).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
     });
@@ -74,7 +58,7 @@ describe('Product API', () => {
             supplier_id: new mongoose.Types.ObjectId()
         });
         const res = await request(app)
-            .put(`/api/products/${product._id}`)
+            .put(`/api/products/products/${product._id}`)
             .send({ price: 12.00 });
         expect(res.statusCode).toBe(200);
         expect(res.body.price).toBe(12.00);
@@ -89,7 +73,7 @@ describe('Product API', () => {
             supplier_id: new mongoose.Types.ObjectId()
         });
         const res = await request(app)
-            .delete(`/api/products/${product._id}`);
+            .delete(`/api/products/products/${product._id}`);
         expect(res.statusCode).toBe(200);
         expect(res.body.message).toMatch(/deleted/i);
     });

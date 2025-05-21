@@ -1,24 +1,5 @@
 const request = require('supertest');
-const app = require('../app');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const User = require('../models/user.model');
-
-let mongoServer;
-
-beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-});
-
-afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-});
-
-afterEach(async () => {
-    await User.deleteMany();
-});
+const app = require('../server');
 
 describe('User API', () => {
     test('should register a new user', async () => {
@@ -30,8 +11,8 @@ describe('User API', () => {
                 password: 'TestPass123'
             });
         expect([200, 201]).toContain(res.statusCode);
-        expect(res.body).toHaveProperty('_id');
-        expect(res.body.email).toBe('testuser@example.com');
+        expect(res.body).toHaveProperty('user');
+        expect(res.body.user.email).toBe('testuser@example.com');
     });
 
     test('should login a user', async () => {
@@ -63,7 +44,7 @@ describe('User API', () => {
                 email: 'getuser@example.com',
                 password: 'GetPass123'
             });
-        const userId = userRes.body._id;
+        const userId = userRes.body.user.id;
         const res = await request(app)
             .get(`/api/users/${userId}`);
         expect(res.statusCode).toBe(200);

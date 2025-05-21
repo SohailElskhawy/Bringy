@@ -1,34 +1,18 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
+const app = require('./app');
 const connectDB = require('./config/db');
-const userRoutes = require('./routes/user.route');
-const productRoutes = require('./routes/product.route');
-const categoryRoutes = require('./routes/category.route');
-const orderRoutes = require('./routes/order.route');
-const supplierRoutes = require('./routes/supplier.route');
-const basketRoutes = require('./routes/basket.route');
-const orderItemsRoutes = require('./routes/orderItems.route');
 
-dotenv.config();
+// Check if we're in test mode
+const isTestMode = process.env.NODE_ENV === 'test';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Only start the server and connect to real DB if NOT in test mode
+if (!isTestMode) {
+    // Start the server
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        // Connect to the real MongoDB database
+        connectDB();
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes)
-app.use('/api/categories', categoryRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/suppliers', supplierRoutes);
-app.use('/api/basket', basketRoutes);
-app.use('/api/orderItems', orderItemsRoutes);
-
-
-
-
-
-app.listen(5000, () => {
-    connectDB();
-    console.log('Server running on port 5000');
-});
+module.exports = app; // Export for testing purposes

@@ -1,53 +1,36 @@
 const request = require('supertest');
-const app = require('../app');
+const app = require('../server');
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const Order = require('../models/order.model');
 
-let mongoServer;
 
-beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
-});
-
-afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-});
-
-afterEach(async () => {
-    await Order.deleteMany();
-});
 
 describe('Order API', () => {
     test('should create a new order', async () => {
         const res = await request(app)
-            .post('/api/orders')
+            .post('/api/orders/orders')
             .send({
                 customerId: new mongoose.Types.ObjectId(),
-                products: [
-                    { productId: new mongoose.Types.ObjectId(), quantity: 2 }
-                ],
-                total: 25.99,
-                status: 'pending'
+                is_delivered: false,
+                paymentMethod: 'cash',
+                totalPrice: 100.00,
+                address: '123 Test St, Test City, TC 12345'
             });
-        expect(res.statusCode).toBe(200);
+        expect(res.statusCode).toBe(201);
         expect(res.body).toHaveProperty('_id');
-        expect(res.body.status).toBe('pending');
+        expect(res.body.is_delivered).toBe(false);
     });
 
     test('should get all orders', async () => {
         await Order.create({
             customerId: new mongoose.Types.ObjectId(),
-            products: [
-                { productId: new mongoose.Types.ObjectId(), quantity: 1 }
-            ],
-            total: 10.00,
-            status: 'pending'
+            is_delivered: false,
+            paymentMethod: 'cash',
+            totalPrice: 100.00,
+            address: '123 Test St, Test City, TC 12345'
         });
         const res = await request(app)
-            .get('/api/orders');
+            .get('/api/orders/orders');
         expect(res.statusCode).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
         expect(res.body.length).toBeGreaterThan(0);
@@ -56,14 +39,13 @@ describe('Order API', () => {
     test('should get an order by id', async () => {
         const order = await Order.create({
             customerId: new mongoose.Types.ObjectId(),
-            products: [
-                { productId: new mongoose.Types.ObjectId(), quantity: 1 }
-            ],
-            total: 15.00,
-            status: 'pending'
+            is_delivered: false,
+            paymentMethod: 'cash',
+            totalPrice: 100.00,
+            address: '123 Test St, Test City, TC 12345'
         });
         const res = await request(app)
-            .get(`/api/orders/${order._id}`);
+            .get(`/api/orders/orders/${order._id}`);
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('_id');
         expect(res.body._id).toBe(order._id.toString());
@@ -72,30 +54,28 @@ describe('Order API', () => {
     test('should update an order', async () => {
         const order = await Order.create({
             customerId: new mongoose.Types.ObjectId(),
-            products: [
-                { productId: new mongoose.Types.ObjectId(), quantity: 1 }
-            ],
-            total: 20.00,
-            status: 'pending'
+            is_delivered: false,
+            paymentMethod: 'cash',
+            totalPrice: 100.00,
+            address: '123 Test St, Test City, TC 12345'
         });
         const res = await request(app)
-            .put(`/api/orders/${order._id}`)
-            .send({ status: 'completed' });
+            .put(`/api/orders/orders/${order._id}`)
+            .send({ is_delivered: true });
         expect(res.statusCode).toBe(200);
-        expect(res.body.status).toBe('completed');
+        expect(res.body.is_delivered).toBe(true);
     });
 
     test('should delete an order', async () => {
         const order = await Order.create({
             customerId: new mongoose.Types.ObjectId(),
-            products: [
-                { productId: new mongoose.Types.ObjectId(), quantity: 1 }
-            ],
-            total: 30.00,
-            status: 'pending'
+            is_delivered: false,
+            paymentMethod: 'cash',
+            totalPrice: 100.00,
+            address: '123 Test St, Test City, TC 12345'
         });
         const res = await request(app)
-            .delete(`/api/orders/${order._id}`);
+            .delete(`/api/orders/orders/${order._id}`);
         expect(res.statusCode).toBe(200);
         expect(res.body.message).toMatch(/deleted/i);
     });
