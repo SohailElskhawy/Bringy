@@ -32,7 +32,7 @@ function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
                     value={product.category_id._id}
                     onChange={(e) => setProduct({ ...product, category_id: e.target.value })}
                 >
-                    <option value="" disabled>Select Category</option>
+                    <option value="">Select Category</option>
                     {loading ? (
                         <option>Loading...</option>
                     ) : (
@@ -47,7 +47,7 @@ function AddProductModel({ product, setProduct, onSubmit, onClose, mode }) {
                     value={product.supplier_id._id}
                     onChange={(e) => setProduct({ ...product, supplier_id: e.target.value })}
                 >
-                    <option value="" disabled>Select Supplier</option>
+                    <option value="">Select Supplier</option>
                     {suppliers.map((supplier) => (
                         <option key={supplier._id} value={supplier._id}>
                             {supplier.name}

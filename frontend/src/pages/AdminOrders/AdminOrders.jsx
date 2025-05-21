@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './AdminOrders.css';
 import { useNavigate } from 'react-router-dom';
 import useOrders from '../../hooks/useOrders';
@@ -8,13 +8,22 @@ import LoadingModel from '../../components/LoadingModel/LoadingModel';
 
 
 function AdminOrders() {
-  const { orders, loading, refresh } = useOrders(); 
+  const { orders, loading, refresh } = useOrders();
   const navigate = useNavigate();
-  const [username] = useState('Admin');
 
   const [isOrderItemsModelOpen, setIsOrderItemsModelOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [printOrderData, setPrintOrderData] = useState(null);
+  const [user, setUser] = useState({});
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setUser(user);
+    }
+  }, []);
+
+
 
 
   const handleSeeItems = (orderId) => {
@@ -24,8 +33,8 @@ function AdminOrders() {
 
   const handleSignOut = () => {
     localStorage.removeItem('token');
-		localStorage.removeItem('user');
-		navigate('/admin/login');
+    localStorage.removeItem('user');
+    navigate('/admin/login');
   };
 
   const handlePrint = async (orderId) => {
@@ -72,6 +81,16 @@ function AdminOrders() {
       });
   }
 
+  if (user.role !== 'admin' && user.role !== 'delivery') {
+    return (
+      <div className="products-container">
+        <h1>Unauthorized Access</h1>
+        <p>You do not have permission to access this page.</p>
+        <button onClick={() => navigate('/admin/login')}>Go to Login</button>
+      </div>
+    )
+  }
+
   return (
     <div className="admin-orders-container">
       <header className="admin-header">
@@ -80,7 +99,7 @@ function AdminOrders() {
           <button onClick={() => navigate("/products")}>Products</button>
         </nav>
         <div className="admin-welcome">
-          <span>Welcome, {username}</span>
+          <span>Welcome, {user && user.name}</span>
           <button onClick={handleSignOut}>Sign Out</button>
         </div>
       </header>

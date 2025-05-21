@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './Products.css';
 import { useNavigate } from 'react-router-dom';
 import AddProductModel from '../../components/AddProductModel/AddProductModel';
@@ -12,7 +12,7 @@ import MessageModel from '../../components/MessageModel/MessageModel';
 function Products() {
 	const { products, loading, refresh } = useProducts();
 
-	const [username] = useState('Admin');
+	
 	const navigate = useNavigate();
 	const [isAddProductModelOpen, setIsAddProductModelOpen] = useState(false);
 	const [isAddCategoryModelOpen, setIsAddCategoryModelOpen] = useState(false);
@@ -38,11 +38,27 @@ function Products() {
 	const [isEditMode, setIsEditMode] = useState(false);
 	const [showConfirm, setShowConfirm] = useState(false);
 
+	const [user, setUser] = useState({});
+	useEffect(() => {
+			const storedUser = localStorage.getItem('user');
+			if (storedUser) {
+				const user = JSON.parse(storedUser);
+				setUser(user);
+			}
+		}, []);
+
+
 	const handleSignOut = () => {
+		localStorage.removeItem('token');
+		localStorage.removeItem('user');
 		navigate('/admin/login');
 	};
 
 	const handleEdit = (productId) => {
+		if (!product.name || !product.price || !product.image_url || !product.category_id || !product.supplier_id) {
+			setMessage('Please fill in all fields.');
+			return;
+		}
 		try {
 			fetch(`http://localhost:5000/api/products/products/${productId}`, {
 				method: 'PUT',
@@ -96,6 +112,10 @@ function Products() {
 	};
 
 	const handleAddProduct = () => {
+		if (!product.name || !product.price || !product.image_url || !product.category_id || !product.supplier_id) {
+			setMessage('Please fill in all fields.');
+			return;
+		}
 		try {
 			fetch('http://localhost:5000/api/products/products', {
 				method: 'POST',
@@ -125,6 +145,10 @@ function Products() {
 	};
 
 	const handleAddCategory = () => {
+		if (!category.name) {
+			setMessage('Please fill in all fields.');
+			return;
+		}
 		try {
 			fetch('http://localhost:5000/api/categories/categories', {
 				method: 'POST',
@@ -155,6 +179,10 @@ function Products() {
 	};
 
 	const handleAddSupplier = () => {
+		if (!supplier.name) {
+			setMessage('Please fill in all fields.');
+			return;
+		}
 		try {
 			fetch('http://localhost:5000/api/suppliers/suppliers', {
 				method: 'POST',
@@ -211,6 +239,17 @@ function Products() {
 		}
 	}
 
+	if (user.role !== 'admin') {
+		return (
+			<div className="products-container">
+				<h1>Unauthorized Access</h1>
+				<p>You do not have permission to access this page.</p>
+				<button onClick={() => navigate('/admin/login')}>Go to Login</button>
+			</div>
+		)
+	}
+
+
 	return (
 		<div className="products-container">
 			<header className="products-header">
@@ -219,7 +258,7 @@ function Products() {
 					<button onClick={() => navigate('/products')} className='clicked'>Products</button>
 				</nav>
 				<div className="products-welcome">
-					<span>Welcome, {username}</span>
+					<span>Welcome, {user && user.name}</span>
 					<button onClick={handleSignOut}>Sign Out</button>
 				</div>
 			</header>
@@ -321,7 +360,7 @@ function Products() {
 								<th>ID</th>
 								<th>Image</th>
 								<th>Name</th>
-								<th>Price ($)</th>
+								<th>Price (TL)</th>
 								<th>Category</th>
 								<th>Supplier</th>
 								<th>Is Deleted</th>
