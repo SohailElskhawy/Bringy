@@ -1,0 +1,51 @@
+name: CI for Bringy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  setup-test-build:
+    name: Test & Build MERN App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: 📦 Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: ✅ Run backend tests
+        working-directory: ./backend
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: npm test
+
+        
+      - name: 📦 Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: 🏗️ Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      # Optional: Save artifact or deploy
+      # - name: 📤 Deploy step (optional for local dev)
+      #   run: echo "Deployment placeholder"
+
+      - name: 🧼 Lint frontend code (optional)
+        working-directory: ./frontend
+        run: npm run lint
