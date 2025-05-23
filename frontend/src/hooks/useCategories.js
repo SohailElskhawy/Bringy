@@ -10,7 +10,6 @@ function useCategories() {
             try {
                 const response = await fetch('http://localhost:5000/api/categories/categories');
                 const data = await response.json();
-                console.log('Categories data:', data);
                 setCategories(data);
             } catch (error) {
                 console.error('Error fetching categories:', error);

@@ -9,7 +9,6 @@ const useCustomerOrders = () => {
         try {
             const response = await fetch(`http://localhost:5000/api/orders/orders/customer/${id}`);
             const data = await response.json();
-            console.log(data);
             if (data) {
                 setOrders(data);
             }

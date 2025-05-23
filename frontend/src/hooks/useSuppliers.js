@@ -10,7 +10,6 @@ function useSuppliers() {
             try {
                 const response = await fetch('http://localhost:5000/api/suppliers/suppliers');
                 const data = await response.json();
-                console.log('Suppliers data:', data);
                 setSuppliers(data);
             } catch (error) {
                 console.error('Error fetching suppliers:', error);

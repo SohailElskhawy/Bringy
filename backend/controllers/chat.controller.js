@@ -1,35 +1,57 @@
 const openai = require('../config/openai');
 const Product = require('../models/product.model');
 const Basket = require('../models/basket.model');
-const extractIngredients = async (message) => {
-    const response = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [
-            {
-                role: "user",
-                content: `Extract only the ingredient names from this sentence as a JavaScript array of strings: "${message}"`,
-            },
-        ],
-    });
 
-    const ingredients = JSON.parse(response.choices[0].message.content);
-    return ingredients; // e.g., ["pasta", "tomato sauce"]
+
+const extractIngredients = async (message) => {
+  const openaiPrompt = `
+You are an assistant that extracts ingredient names from meal descriptions.
+
+Example:
+Input: "I want to make Scrambled Eggs"
+Output: ["Eggs", "Butter", "Salt"]
+
+Input: "I want to make Pasta with Tomato Sauce"
+Output: ["Pasta", "Tomato Sauce", "Garlic"]
+
+Now extract ingredients from:
+"${message}"
+
+Return the result as a JSON array of ingredient names.
+`;
+  const response = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [
+      {
+        role: "user",
+        content: openaiPrompt,
+      },
+    ],
+  });
+
+  const ingredients = JSON.parse(response.choices[0].message.content);
+  return ingredients; // e.g., ["pasta", "tomato sauce"]
 };
 
 
 const findProducts = async (ingredientNames) => {
-    const regexList = ingredientNames.map(name =>
-        new RegExp(`\\b${name}\\b`, 'i') // word-boundary matching, case insensitive
-    );
+  const matchedProducts = [];
 
-    const products = await Product.find({
-        name: { $in: regexList },
-        is_deleted: false
-    });
+  for (const ingredient of ingredientNames) {
+    const regex = new RegExp(ingredient, 'i');
 
-    return products;
+    const bestMatch = await Product.findOne({
+      name: { $regex: regex },
+      is_deleted: false,
+    }).sort({ price: 1 }); // or add another sort criteria
+
+    if (bestMatch) {
+      matchedProducts.push(bestMatch);
+    }
+  }
+
+  return matchedProducts;
 };
-
 
 
 
@@ -58,7 +80,7 @@ const addToBasket = async (userId, productList) => {
 
 
 module.exports = {
-    extractIngredients,
-    findProducts,
-    addToBasket
+  extractIngredients,
+  findProducts,
+  addToBasket
 };
