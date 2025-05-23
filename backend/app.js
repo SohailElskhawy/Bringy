@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/order.route');
 const supplierRoutes = require('./routes/supplier.route');
 const basketRoutes = require('./routes/basket.route');
 const orderItemsRoutes = require('./routes/orderItems.route');
+const chatRoutes = require('./routes/chat.route');
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/basket', basketRoutes);
 app.use('/api/orderItems', orderItemsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Export the app WITHOUT starting the server
 module.exports = app;
