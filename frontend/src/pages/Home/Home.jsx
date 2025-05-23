@@ -1,3 +1,4 @@
+import ChatBot from '../../components/ChatBot/ChatBot';
 import LoadingModel from '../../components/LoadingModel/LoadingModel';
 import useCategories from '../../hooks/useCategories';
 import useProducts from '../../hooks/useProducts';
@@ -151,6 +152,8 @@ function Home() {
 							}
 						})}
 					</div>
+
+					<ChatBot />
 				</main>
 			</div>
 			{

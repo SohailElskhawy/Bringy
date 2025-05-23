@@ -51,6 +51,7 @@
   padding: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .product-area {
