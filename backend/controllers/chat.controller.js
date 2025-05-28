@@ -2,6 +2,11 @@ const openai = require('../config/openai');
 const Product = require('../models/product.model');
 const Basket = require('../models/basket.model');
 
+/**
+ * Extract ingredient names from a meal description using OpenAI
+ * @param {string} message - The meal description provided by the user
+ * @returns {Promise<Array<string>>} - Array of extracted ingredient names
+ */
 
 const extractIngredients = async (message) => {
   const openaiPrompt = `
@@ -34,6 +39,12 @@ Return the result as a JSON array of ingredient names.
 };
 
 
+/**
+ * Find matching products in the database for a list of ingredient names
+ * @param {Array<string>} ingredientNames - List of ingredient names to search for
+ * @returns {Promise<Array<Object>>} - Array of matched product documents
+ */
+
 const findProducts = async (ingredientNames) => {
   const matchedProducts = [];
 
@@ -54,6 +65,12 @@ const findProducts = async (ingredientNames) => {
 };
 
 
+/**
+ * Add a list of products to a user's basket (create basket if it doesn't exist)
+ * @param {string|ObjectId} userId - The user's ID
+ * @param {Array<Object>} productList - List of product documents to add
+ * @returns {Promise<void>}
+ */
 
 const addToBasket = async (userId, productList) => {
   const basket = await Basket.findOne({ customerId: userId });

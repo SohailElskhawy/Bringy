@@ -1,25 +1,19 @@
 const Product = require('../models/product.model');
 
-/*
-    Functions:
+/**
+ *  addProduct,
+    getProductsByCategory,
+    getAllProducts,
+    sortProductsByPrice,
+    getProductsBySearchTerm,
+    updateProduct,
+    deleteProduct,
+    restoreProduct &
+    filterProducts
 
-    - addProduct (Done)
-    
-    - getAllProducts (Done)
-    
-    - getProductsByCategory (Done)
-
-    - sortProductsByPrice   (Done)
-
-    getProductsBySearchTerm (Done)
-    
-    - updateProduct (Done)
-    
-    - deleteProduct    (Done)
-
-    - restoreProduct (Done)
-
-*/
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 
 // add new product

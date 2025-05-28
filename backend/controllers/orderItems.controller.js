@@ -1,15 +1,13 @@
 const OrderItems = require('../models/orderItems.model');
 
 
-/*
-
-    functions:
-
-    addOrderItems: function to add order items to the database
-
-    getOrderItemsByOrderId: function to get order items by order id
-
-*/
+/**
+ *  addOrderItems &
+    getOrderItemsByOrderId
+    
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 
 // add order items to the database

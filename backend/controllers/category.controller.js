@@ -1,20 +1,15 @@
 const Category = require('../models/category.model');
 
-/*
-    Functions:
-
-    - addCategory (Done)
+/**
+ *  addCategory,
+    getAllCategories,
+    getCategoryById,
+    updateCategory &
+    deleteCategory
     
-    - getAllCategories (Done)
-    
-    - getCategoryById (Done)
-
-    - updateCategory (Done)
-    
-    - deleteCategory (Done)
-
-
-*/
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 // add new category
 const addCategory = async (req, res) => {

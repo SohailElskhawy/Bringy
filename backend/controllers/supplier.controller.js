@@ -1,15 +1,15 @@
 const Supplier = require('../models/supplier.model');
 
-
-/*
-    Functions:
-
-    - addSupplier (Done)
+/**
+ *  addSupplier,
+    getAllSuppliers,
+    getSupplierById,
+    updateSupplier &
+    deleteSupplier
     
-    - getAllSuppliers (Done)
-    
-
-*/
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 // add new supplier
 const addSupplier = async (req, res) => {

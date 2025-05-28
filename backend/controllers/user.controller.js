@@ -1,6 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
+
+/**
+ * register,
+ *  verifyEmail,
+ *  adminLogin, 
+ * login 
+ * & getUser
+ *  
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+
 const register = async (req, res) => {
     try {
         // get user input
@@ -50,6 +62,7 @@ const register = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
 
 const login = async (req, res) => {
     try {

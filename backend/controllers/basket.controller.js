@@ -1,14 +1,16 @@
 const Basket = require('../models/basket.model');
 
-/*
-  Functions:
-  - getBasket
-  - removeProduct
-  - increaseQuantity
-  - decreaseQuantity
-  - clearBasket
-  - addProductToBasket
-*/
+/**
+ *    removeProduct,
+    increaseQuantity,
+    decreaseQuantity,
+    clearBasket,
+    addProductToBasket &
+    getBasket
+	
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 
 const getBasket = async (req, res) => {

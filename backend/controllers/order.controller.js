@@ -1,22 +1,17 @@
 const Order = require('../models/order.model');
 
 
-/*
-    Functions:
-
-    - addOrder (Done)
+/**
+ *  addOrder,
+    getAllOrders,
+    getOrderById,
+    updateOrderStatus,
+    deleteOrder &
+    getCustomerOrders
     
-    - getAllOrders (Done)
-    
-    - getOrderById (Done)
-
-    - updateOrderStatus (Done)
-    
-    - deleteOrder (Done)
-
-    - getCustomerOrders (Done)
-
-*/
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 // add new order
 const addOrder = async (req, res) => {
