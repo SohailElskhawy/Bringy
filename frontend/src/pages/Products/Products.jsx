@@ -116,6 +116,11 @@ function Products() {
 			setMessage('Please fill in all fields.');
 			return;
 		}
+
+		if (product.price < 0) {
+			setMessage('Price cannot be negative.');
+			return;
+		}
 		try {
 			fetch('http://localhost:5000/api/products/products', {
 				method: 'POST',

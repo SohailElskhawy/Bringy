@@ -23,7 +23,7 @@ function AdminOrders() {
     }
   }, []);
 
-
+  console.log(orders)
 
 
   const handleSeeItems = (orderId) => {
@@ -129,7 +129,7 @@ function AdminOrders() {
             orders.map((order) => (
               <tr key={order._id}>
                 <td>{order._id.substring(0, 5) + '...'}</td>
-                <td>{order.customerId.substring(0, 5) + '...'}</td>
+                <td>{order.customerId.name}</td>
                 <td className='date_td'>{new Date(order.createdAt).toLocaleString()}</td>
                 <td className='date_td'>{new Date(order.updatedAt).toLocaleString()}</td>
                 <td>{order.is_delivered ? 'Yes' : 'No'}</td>
