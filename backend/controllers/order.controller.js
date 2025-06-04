@@ -35,7 +35,7 @@ const addOrder = async (req, res) => {
 // get all orders
 const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find();
+        const orders = await Order.find().populate('customerId', 'name email')
         if (!orders) {
             return res.status(404).json({ message: "No orders found" });
         }
