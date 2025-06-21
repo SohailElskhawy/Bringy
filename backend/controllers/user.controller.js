@@ -1,7 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
-const sendVerificationEmail = require('../services/sendVerificationEmail');
+
+/**
+ * register,
+ *  verifyEmail,
+ *  adminLogin, 
+ * login 
+ * & getUser
+ *  
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 const register = async (req, res) => {
     try {
@@ -35,17 +45,24 @@ const register = async (req, res) => {
         // create token for email verification
         const token = jwt.sign({ email: user.email, id: user._id }, 'test', { expiresIn: "1h" });
 
-        // send email verification link
-        await sendVerificationEmail(user.email, user.name, token);
 
         res.status(201).json({
-            message: "User registered successfully. Please check your email for verification.",
+            message: "User registered successfully.",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified
+            },
+            token,
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 };
+
 
 const login = async (req, res) => {
     try {
@@ -177,5 +194,27 @@ const adminLogin = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isVerified: user.isVerified
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
 
-module.exports = { register, verifyEmail, adminLogin, login };
+
+
+module.exports = { register, verifyEmail, adminLogin, login, getUser };

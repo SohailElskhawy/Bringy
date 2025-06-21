@@ -1,17 +1,18 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
+const app = require('./app');
 const connectDB = require('./config/db');
-const userRoutes = require('./routes/user.route');
-dotenv.config();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Check if we're in test mode
+const isTestMode = process.env.NODE_ENV === 'test';
 
-app.use('/api/users', userRoutes);
+// Only start the server and connect to real DB if NOT in test mode
+if (!isTestMode) {
+    // Start the server
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        // Connect to the real MongoDB database
+        connectDB();
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
-app.listen(5000, () =>{
-    connectDB();
-    console.log('Server running on port 5000');
-});
+module.exports = app; // Export for testing purposes

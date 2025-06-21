@@ -10,7 +10,7 @@ function CustomerRegister() {
     const [showPassword, setShowPassword] = useState(false)
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
 
         e.preventDefault()
         const data = {
@@ -19,24 +19,27 @@ function CustomerRegister() {
             password
         }
 
-        fetch('http://localhost:5000/api/users/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then((res) => {
-            navigate('/')
-            return res.json()
-        }).then((data) => {
-            console.log(data)
-            if (data.error) {
-                alert(data.error)
-            }
-            else {
-                alert(data.message)
-            }
-        })
+        const res = await fetch('http://localhost:5000/api/users/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		});
+
+        const result = await res.json();
+
+		if (!res.ok) {
+			alert(result.message || 'Register failed');
+			return;
+		}
+
+		// Save token and user to localStorage
+		localStorage.setItem('token', result.token);
+		localStorage.setItem('user', JSON.stringify(result.user));
+
+		alert('Login successful');
+		navigate('/'); // redirect to home
     }
 
     return (

@@ -19,6 +19,10 @@
     border-radius: 6px;
     cursor: pointer;
   }
+
+  .admin-header nav button.clicked {
+    background-color: #0056b3;
+  }
   
   .admin-header nav button:hover {
     background-color: #0056b3;
@@ -77,3 +81,7 @@
     background-color: #218838;
   }
   
+  .date_td {
+    white-space: nowrap;
+    font-size: small;
+  }

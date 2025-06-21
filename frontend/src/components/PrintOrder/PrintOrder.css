@@ -1,0 +1,36 @@
+@media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .print-container, .print-container * {
+      visibility: visible;
+    }
+  
+    .print-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 2rem;
+      background-color: white;
+      color: black;
+    }
+  
+    .print-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+  
+    .print-items-table th, .print-items-table td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+  
+    .print-items-table th {
+      background-color: #eee;
+    }
+  }
+  

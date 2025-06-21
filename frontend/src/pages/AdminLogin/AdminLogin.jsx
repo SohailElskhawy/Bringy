@@ -8,32 +8,41 @@ function AdminLogin() {
 
 	const [showPassword, setShowPassword] = useState(false)
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 
 		e.preventDefault()
 		const data = {
 			email,
 			password
 		}
+		//
 
-		fetch('http://localhost:5000/api/users/admin/login', {
+		try {
+		const res = await fetch('http://localhost:5000/api/users/admin/login', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data)
-		}).then((res) => {
-			navigate('/admin/orders')
-			return res.json()
-		}).then((data) => {
-			console.log(data)
-			if (data.error) {
-				alert(data.error)
-			}
-			else {
-				alert(data.message)
-			}
-		})
+			body: JSON.stringify(data),
+		});
+
+		const result = await res.json();
+
+		if (!res.ok) {
+			alert(result.message || 'Login failed');
+			return;
+		}
+
+		// Save token and user to localStorage
+		localStorage.setItem('token', result.token);
+		localStorage.setItem('user', JSON.stringify(result.user));
+
+		alert('Login successful');
+		navigate('/admin/orders'); 
+	} catch (err) {
+		console.error('Login error:', err);
+		alert('An error occurred');
+	}
 	}
 	return (
 		<div className="register_page">

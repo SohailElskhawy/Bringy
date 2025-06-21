@@ -13,11 +13,13 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     "category_id":{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
         required: true
     },
     "supplier_id":{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplier',
         required: true
     },
     "is_deleted":{

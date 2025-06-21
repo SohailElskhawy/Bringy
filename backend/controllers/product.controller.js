@@ -1,23 +1,19 @@
 const Product = require('../models/product.model');
 
-/*
-    Functions:
+/**
+ *  addProduct,
+    getProductsByCategory,
+    getAllProducts,
+    sortProductsByPrice,
+    getProductsBySearchTerm,
+    updateProduct,
+    deleteProduct,
+    restoreProduct &
+    filterProducts
 
-    - addProduct (Done)
-    
-    - getAllProducts (Done)
-    
-    - getProductsByCategory (Done)
-
-    - sortProductsByPrice (Done)
-
-    getProductsBySearchTerm (Done)
-    
-    - updateProduct     (Done)
-    
-    - deleteProduct     (Done)
-
-*/
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 
 
 // add new product
@@ -101,6 +97,8 @@ const getProductsBySearchTerm = async (req, res) => {
 }
 
 
+
+
 // update product by ID
 const updateProduct = async (req, res) => {
     try {
@@ -139,6 +137,56 @@ const deleteProduct = async (req, res) => {
 };
 
 
+// restoreProduct // restore product by ID
+
+const restoreProduct = async (req, res) => {
+    try {
+        const { id } = req.params; // Product ID from the request parameters
+
+        const restoredProduct = await Product.findByIdAndUpdate(id, { is_deleted: false }, { new: true });
+
+        if (!restoredProduct) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ message: "Product restored successfully", product: restoredProduct });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
+const filterProducts = async (req, res) => {
+    try {
+        const { category_id, sort, search } = req.query;
+
+        let query = {};
+        if (category_id) {
+            query.category_id = category_id;
+        }
+
+        if (search) {
+            query.name = { $regex: search, $options: 'i' };
+        }
+
+        let sortOption = {};
+
+        if (sort) {
+            sortOption.price = sort === 'asc' ? 1 : -1;
+        }
+
+        const products = await Product.find(query).sort(sortOption).populate('category_id').populate('supplier_id');
+        if (!products) {
+            return res.status(404).json({ message: "No products found" });
+        }
+        res.status(200).json(products);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
+
 
 
 module.exports = {
@@ -148,4 +196,7 @@ module.exports = {
     sortProductsByPrice,
     getProductsBySearchTerm,
     updateProduct,
+    deleteProduct,
+    restoreProduct,
+    filterProducts
 };
