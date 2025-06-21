@@ -48,6 +48,12 @@ const ChatBot = () => {
 
     const handleAddToBasket = async () => {
         try {
+            if (!customer || !customer.id) {
+                alert("Please log in to add products to your basket.");
+                return;
+            }
+
+
             const productIds = productResults.map(p => p._id);
 
             await fetch("http://localhost:5000/api/chat/chat/add-to-basket", {
@@ -138,9 +144,6 @@ const ChatBot = () => {
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         list="suggestions"
-                                        // disabled={
-                                        //     (messages.length > 1) 
-                                        // }
                                     />
                                     <button className="chat-send-button" id="sendButton" onClick={sendMessage}>
                                         Send
