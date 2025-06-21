@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './Chatbot.css';
+import './ChatBot.css';
 
 const ChatBot = () => {
     const [showChatbot, setShowChatbot] = useState(false);
