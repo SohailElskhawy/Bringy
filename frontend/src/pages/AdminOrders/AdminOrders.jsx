@@ -69,11 +69,11 @@ function AdminOrders() {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.success) {
-          console.log('Order status updated successfully:', data.order);
+        if (data) {
+          console.log('Order status updated successfully:', data);
           refresh();
         } else {
-          console.error('Failed to update order status:', data.message);
+          console.error('Failed to update order status:', data);
         }
       })
       .catch((error) => {
