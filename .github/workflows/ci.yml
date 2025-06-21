@@ -31,6 +31,10 @@ jobs:
         working-directory: ./backend
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MJ_APIKEY_PUBLIC: ${{ secrets.MJ_APIKEY_PUBLIC }}
+          MJ_APIKEY_PRIVATE: ${{ secrets.MJ_APIKEY_PRIVATE }}
+          CLIENT_URL: http://localhost:5000
         run: npm test
 
         
@@ -41,11 +45,3 @@ jobs:
       - name: 🏗️ Build frontend
         working-directory: ./frontend
         run: npm run build
-
-      # Optional: Save artifact or deploy
-      # - name: 📤 Deploy step (optional for local dev)
-      #   run: echo "Deployment placeholder"
-
-      - name: 🧼 Lint frontend code (optional)
-        working-directory: ./frontend
-        run: npm run lint
